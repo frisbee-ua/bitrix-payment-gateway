@@ -23,6 +23,7 @@
  */
 
 
-$MESS['F_MODULE_NAME'] = 'Frisbee platforma płatności';
-$MESS['F_MODULE_DESC'] = 'Obsługa platfromy płatności Frisbee';
-$MESS['F_ERR_MODULE_NOT_FOUND'] = '#MODULE# jest wymagany, aby zainstalować to rozwiązanie.';
+$MESS['F_MODULE_NAME'] = 'Платіжна система Frisbee';
+$MESS['F_MODULE_DESC'] = 'Оброблювач для платіжної системи Frisbee';
+$MESS['F_PS_DESC'] = 'Купуй зараз, плати потім';
+$MESS['F_ERR_MODULE_NOT_FOUND'] = 'Для установки даного рішення необхідна наявність модуля #MODULE#.';

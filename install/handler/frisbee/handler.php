@@ -13,8 +13,13 @@ use Bitrix\Main\Web\HttpClient;
 use Bitrix\Sale\PriceMaths;
 use Bitrix\Sale\Registry;
 use Bitrix\Crm\Order\Order;
+use CUser;
 
 Loc::loadMessages(__FILE__);
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/sale/lib/paysystem/context.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/sale/lib/paysystem/baseservicehandler.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/sale/lib/paysystem/servicehandler.php';
 
 /**
  * Class FrisbeeHandler
@@ -23,7 +28,7 @@ Loc::loadMessages(__FILE__);
  */
 class FrisbeeHandler extends PaySystem\ServiceHandler
 {
-    const DELIMITER_PAYMENT_ID = ':';
+    const PRECISION = 2;
 
     private $prePaymentSetting = [];
 
@@ -37,38 +42,52 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
      */
     public function initiatePay(Payment $payment, Request $request = null)
     {
+        require_once 'lib/FrisbeeService.php';
+
         $busValues = $this->getParamsBusValue($payment);
 
         $order = $payment->getOrder();
         $orderId = $order->getId();
+        $currency = $order->getCurrency();
+
+        if ($payment->isPaid()) {
+            return $this->showTemplate($payment, 'template');
+        }
+
+        if (strtoupper($currency) == 'RUR') {
+            $currency = 'RUB';
+        }
+
+        $frisbeeService = new \FrisbeeService();
+        $frisbeeService->setMerchantId($busValues['MERCHANT_ID']);
+        $frisbeeService->setSecretKey($busValues['SECRET_KEY']);
+        $frisbeeService->setRequestParameterOrderId($orderId);
+        $frisbeeService->setRequestParameterOrderDescription($this->generateOrderDescriptionParameter($order));
+        $frisbeeService->setRequestParameterAmount($payment->getSum() * 100);
+        $frisbeeService->setRequestParameterCurrency($currency);
+        $frisbeeService->setRequestParameterServerCallbackUrl($this->getPathResultUrl($payment));
+        $frisbeeService->setRequestParameterResponseUrl($this->getReturnUrl($payment));
+        $frisbeeService->setRequestParameterLanguage(\Bitrix\Main\Application::getInstance()->getContext()->getLanguage());
+        $frisbeeService->setRequestParameterSenderEmail($order->getPropertyCollection()->getUserEmail()->getValue());
+        $frisbeeService->setRequestParameterReservationData($this->generateReservationDataParameter($order));
 
         try {
-            $url = $this->generateFrisbeeUrl($payment, $order, $busValues);
-            LocalRedirect($url);
-        } catch (\Exception $exception) {
-            $params = [
-                'AMOUNT' => $payment->getSum() * 100,
-                'CURRENCY' => $order->getCurrency(),
-                'LANG' => \Bitrix\Main\Application::getInstance()->getContext()->getLanguage(),
-                'MERCHANT_ID' => $busValues['MERCHANT_ID'],
-                'ORDER_DESC' => $payment->getField('USER_DESCRIPTION') ?: $orderId,
-                'ORDER_ID' => sprintf('%s:%s', $orderId, time()),
-                'PAYMENT_SYSTEMS' => 'frisbee',
-                'SENDER_EMAIL' => $order->getPropertyCollection()->getUserEmail()->getValue(),
-                'SERVER_CALLBACK_URL' => $this->getPathResultUrl($payment),
-            ];
+            $checkoutUrl = $frisbeeService->retrieveCheckoutUrl($orderId);
 
-            if (strtoupper($busValues['CURRENCY']) == "RUR") {
-                $params['CURRENCY'] = "RUB";
+            if ($checkoutUrl) {
+                return LocalRedirect($checkoutUrl);
             }
 
-            $params['SIGNATURE'] = $this->getSignature($params, $busValues['SECRET_KEY']);
-            $params['URL'] = $this->getPaymentUrl($busValues);
-
-            $this->setExtraParams($params);
-
-            return $this->showTemplate($payment, "template");
+            $message = $frisbeeService->getRequestResultErrorMessage();
+        } catch (\Exception $exception) {
+            $message = $exception->getMessage();
         }
+
+        $this->setExtraParams([
+            'message' => $message,
+        ]);
+
+        return $this->showTemplate($payment, 'template');
     }
 
     /**
@@ -89,18 +108,6 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
     }
 
     /**
-     * @return mixed
-     */
-    protected function getUrlList()
-    {
-        return [
-            'pay' => [
-                self::ACTIVE_URL => 'https://api.fondy.eu/api/checkout/redirect/',
-            ]
-        ];
-    }
-
-    /**
      * @param Payment $payment
      * @param Request $request
      * @return PaySystem\ServiceResult
@@ -116,47 +123,6 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
     public function getCurrencyList()
     {
         return ['RUB', 'USD', 'EUR', 'UAH'];
-    }
-
-    private function generateFrisbeeUrl(Payment $payment, Order $order, $busValues)
-    {
-        $orderId = $order->getId();
-        $params = [
-            'order_id' => sprintf('%s:%s', $orderId, time()),
-            'merchant_id' => $busValues['MERCHANT_ID'],
-            'order_desc' => $payment->getField('USER_DESCRIPTION') ?: "Order #$orderId",
-            'amount' => $payment->getSum() * 100,
-            'server_callback_url' => $this->getPathResultUrl($payment),
-            'response_url' => $this->getReturnUrl($payment),
-            'lang' => \Bitrix\Main\Application::getInstance()->getContext()->getLanguage(),
-            'sender_email' => $order->getPropertyCollection()->getUserEmail()->getValue(),
-            'payment_systems' => 'frisbee',
-            'default_payment_system' => 'frisbee',
-        ];
-
-        if (strtoupper($busValues['CURRENCY']) == "RUR") {
-            $params['currency'] = "RUB";
-        } else {
-            $params['currency'] = $order->getCurrency();
-        }
-
-        $params['signature'] = $this->getSignature($params, $busValues['SECRET_KEY']);
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->getPaymentUrl($busValues));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-type: application/json']);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['request' => $params]));
-        $result = json_decode(curl_exec($ch));
-
-        if (!isset($result->response->response_status)) {
-            throw new \Exception('Unsuccessful response from API');
-        } elseif ($result->response->response_status == 'success') {
-            return $result->response->checkout_url;
-        } else {
-            throw new \Exception(sprintf('Error message from the API: %s', $result->response->error_message));
-        }
     }
 
     /**
@@ -180,38 +146,108 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
     }
 
     /**
-     * @param $data
-     * @param $password
-     * @param bool $encoded
+     * @param \Bitrix\Crm\Order\Order $order
      * @return string
+     * @throws \Exception
      */
-    private function getSignature($data, $password, $encoded = true)
+    private function generateReservationDataParameter($order)
     {
-        $data = array_filter($data, function ($var) {
-            return $var !== '' && $var !== null;
-        });
-        ksort($data);
+        $userId = $order->getField('USER_ID');
 
-        $str = $password;
-        foreach ($data as $k => $v) {
-            $str .= '|'.$v;
+        $propertyCollection = $order->getPropertyCollection();
+        $zip = $propertyCollection->getDeliveryLocationZip();
+
+        $reservationData = array(
+            'phonemobile' => $propertyCollection->getPhone()->getValue(),
+            'customer_address' => $propertyCollection->getItemByOrderPropertyCode('ADDRESS')->getValue(),
+            'customer_name' => $propertyCollection->getPayerName()->getValue(),
+            'account' => $userId,
+            'products' => $this->generateProductsParameter($order),
+            'cms_name' => 'Bitrix',
+            'cms_version' => defined('SM_VERSION') ? SM_VERSION : '',
+            'shop_domain' => $_SERVER['SERVER_NAME'] ?: $_SERVER['HTTP_HOST'],
+            'path' => $_SERVER['REQUEST_URI'],
+            'uuid' => isset($_SERVER['HTTP_USER_AGENT']) ? base64_encode($_SERVER['HTTP_USER_AGENT']) : time()
+        );
+
+        if ($zip) {
+            $reservationData['customer_zip'] = $zip->getValue();
         }
 
-        if ($encoded) {
-            return sha1($str);
-        } else {
-            return $str;
+        if ($userId) {
+            /**
+             * @var CUser $rsUser
+             */
+            $rsUser = CUser::GetByID($userId);
+            $arUser = $rsUser->fetch();
+
+            $countryId = !empty($arUser['PERSONAL_COUNTRY']) ? $arUser['PERSONAL_COUNTRY'] : $arUser['WORK_COUNTRY'];
+            $state = !empty($arUser['PERSONAL_STATE']) ? $arUser['PERSONAL_STATE'] : $arUser['WORK_STATE'];
+            $zip = !empty($arUser['PERSONAL_STATE']) ? $arUser['PERSONAL_STATE'] : $arUser['WORK_STATE'];
+            $city = !empty($arUser['PERSONAL_CITY']) ? $arUser['PERSONAL_CITY'] : $arUser['WORK_CITY'];
+
+            if ($countryId) {
+                $reservationData['customer_country'] = GetCountryCodeById($countryId);
+            }
+
+            if ($state) {
+                $reservationData['customer_state'] = $state;
+            }
+
+            if (empty($reservationData['customer_zip'])) {
+                $reservationData['customer_zip'] = $zip;
+            }
+
+            $reservationData['customer_city'] = $city;
         }
+
+        return base64_encode(json_encode($reservationData));
     }
 
-    private function getPaymentUrl($params, $redirect = false)
+    /**
+     * @param \Bitrix\Crm\Order\Order $order
+     * @return string
+     * @throws \Exception
+     */
+    private function generateOrderDescriptionParameter($order)
     {
-        $apiHost = 'https://api.fondy.eu';
+        $description = '';
 
-        if (isset($params['IS_TEST']) && $params['IS_TEST']) {
-            $apiHost = 'https://dev2.pay.fondy.eu';
+        /**
+         * @var \Bitrix\Crm\Order\BasketItem $item
+         */
+        foreach ($order->getBasket() as $item) {
+            $description .= sprintf('Name: %s ', trim($item->getField('NAME')));
+            $description .= sprintf('Price: %s ', $item->getPrice());
+            $description .= sprintf('Qty: %s ', $item->getQuantity());
+            $description .= sprintf('Amount: %s\n', $item->getFinalPrice());
         }
 
-        return sprintf('%s/api/checkout/%s/', $apiHost, ($redirect ? 'redirect' : 'url'));
+        return $description;
+    }
+
+    /**
+     * @param \Bitrix\Crm\Order\Order $order
+     * @return array
+     * @throws \Exception
+     */
+    private function generateProductsParameter($order)
+    {
+        $products = [];
+
+        /**
+         * @var \Bitrix\Crm\Order\BasketItem $item
+         */
+        foreach ($order->getBasket() as $item) {
+            $products[] = [
+                'id' => $item->getId(),
+                'name' => trim($item->getField('NAME')),
+                'price' => number_format((float) $item->getPrice(), self::PRECISION),
+                'total_amount' => number_format((float) $item->getFinalPrice(), self::PRECISION),
+                'quantity' => number_format((float) $item->getQuantity(), self::PRECISION),
+            ];
+        }
+
+        return $products;
     }
 }

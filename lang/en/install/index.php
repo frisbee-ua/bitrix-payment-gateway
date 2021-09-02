@@ -23,6 +23,7 @@
  */
 
 
-$MESS['F_MODULE_NAME'] = 'Frisbee Payment Platform';
+$MESS['F_MODULE_NAME'] = 'Frisbee Payment Gateway';
 $MESS['F_MODULE_DESC'] = 'Handler for the Frisbee service';
+$MESS['F_PS_DESC'] = 'Buy now pay later';
 $MESS['F_ERR_MODULE_NOT_FOUND'] = 'To install this solution, #MODULE# is required.';

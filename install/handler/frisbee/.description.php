@@ -18,38 +18,19 @@ $data = [
     'NAME' => 'Frisbee',
 	'SORT' => 500,
 	'CODES' => [
-        "MERCHANT_ID" => array(
-            "NAME" => Loc::getMessage("FRISBEE_MERCHANT"),
-            "DESCR" => Loc::getMessage("FRISBEE_MERCHANT_DESC"),
-            "VALUE" => "",
-            "TYPE" => "",
+        'MERCHANT_ID' => array(
+            'NAME' => Loc::getMessage('FRISBEE_MERCHANT'),
+            'DESCR' => Loc::getMessage('FRISBEE_MERCHANT_DESC'),
+            'VALUE' => '',
+            'TYPE' => '',
             'SORT' => 100,
         ),
-        "SECRET_KEY" => array(
-            "NAME" => Loc::getMessage("FRISBEE_KEY"),
-            "DESCR" => Loc::getMessage("FRISBEE_KEY_DESC"),
-            "VALUE" => "",
-            "TYPE" => "",
+        'SECRET_KEY' => array(
+            'NAME' => Loc::getMessage('FRISBEE_KEY'),
+            'DESCR' => Loc::getMessage('FRISBEE_KEY_DESC'),
+            'VALUE' => '',
+            'TYPE' => '',
             'SORT' => 200,
-        ),
-        "RESPONSE_URL" => array(
-            "NAME" => Loc::getMessage("FRISBEE_RESPONSE_URL"),
-            "DESCR" => Loc::getMessage("FRISBEE_RESPONSE_URL_DESC"),
-            "VALUE" => "",
-            "TYPE" => "",
-            'SORT' => 300,
-        ),
-        "CURRENCY" => array(
-            "NAME" => Loc::getMessage("FRISBEE_CURRENCY"),
-            "VALUE" => "CURRENCY",
-            "TYPE" => "ORDER",
-            'SORT' => 400,
-        ),
-        "IS_TEST" => array(
-            "NAME" => Loc::getMessage("FRISBEE_IS_TEST"),
-            "VALUE" => "",
-            "TYPE" => "",
-            'SORT' => 500,
-        ),
+        )
 	]
 ];
