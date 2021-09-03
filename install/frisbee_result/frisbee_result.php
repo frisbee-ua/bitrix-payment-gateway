@@ -63,6 +63,10 @@ class FrisbeeResult
         $this->parameters = $this->getPaySystemParameters($this->paySystem['ID']);
     }
 
+    /**
+     * @return void
+     * @throws \Exception
+     */
     public function process()
     {
         if (empty($this->parameters['MERCHANT_ID'])) {
@@ -167,11 +171,20 @@ class FrisbeeResult
         return $parameters;
     }
 
+    /**
+     * @param $orderId
+     * @return mixed
+     */
     protected function findOrder($orderId)
     {
         return SaleOrder::load($orderId);
     }
 
+    /**
+     * @param \Bitrix\Sale\Order $order
+     * @return \Bitrix\Sale\Payment
+     * @throws \Exception
+     */
     protected function getPayment(SaleOrder $order)
     {
         /**

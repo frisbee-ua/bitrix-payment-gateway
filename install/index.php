@@ -60,6 +60,9 @@ class frisbee_frisbee extends CModule
         $this->PARTNER_URI = self::PARTNER_URI;
     }
 
+    /**
+     * @return bool
+     */
     public function DoInstall()
     {
         if (IsModuleInstalled('sale')) {
@@ -84,6 +87,9 @@ class frisbee_frisbee extends CModule
         return false;
     }
 
+    /**
+     * @return void
+     */
     public function DoUninstall()
     {
         global $APPLICATION;
@@ -99,6 +105,9 @@ class frisbee_frisbee extends CModule
         $this->UnInstallFiles();
     }
 
+    /**
+     * @return void
+     */
     public function InstallFiles()
     {
         CopyDirFiles(
@@ -113,6 +122,9 @@ class frisbee_frisbee extends CModule
         );
     }
 
+    /**
+     * @return bool
+     */
     public function UnInstallFiles()
     {
 		DeleteDirFilesEx('/bitrix/tools/frisbee_result/');
@@ -120,11 +132,17 @@ class frisbee_frisbee extends CModule
         return true;
     }
 
+    /**
+     * @return mixed
+     */
     private function getPaymentSystemByCode()
     {
         return SalePaySystemManager::getByCode('frisbee');
     }
 
+    /**
+     * @return void
+     */
     private function createPaymentSystem()
     {
         $fields = [
@@ -161,12 +179,18 @@ class frisbee_frisbee extends CModule
         ]);
     }
 
+    /**
+     * @return void
+     */
     private function deletePaymentSystem()
     {
         $paymentSystem = $this->getPaymentSystemByCode();
         SalePaySystemManager::delete($paymentSystem['ID']);
     }
 
+    /**
+     * @return void
+     */
     private function createStatuses()
     {
         $statuses = [];
@@ -227,6 +251,9 @@ class frisbee_frisbee extends CModule
         ]);
     }
 
+    /**
+     * @return void
+     */
     private function deleteStatuses()
     {
         foreach (['R', 'RP'] as $status) {
@@ -237,6 +264,10 @@ class frisbee_frisbee extends CModule
         }
     }
 
+    /**
+     * @param $path
+     * @return string
+     */
     private function getAbsolutePath($path)
     {
         return sprintf('%s/%s', $_SERVER['DOCUMENT_ROOT'], ltrim($path, '/'));
