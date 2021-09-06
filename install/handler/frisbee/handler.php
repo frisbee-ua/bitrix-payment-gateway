@@ -220,7 +220,7 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
             $description .= sprintf('Name: %s ', trim($item->getField('NAME')));
             $description .= sprintf('Price: %s ', $item->getPrice());
             $description .= sprintf('Qty: %s ', $item->getQuantity());
-            $description .= sprintf('Amount: %s\n', $item->getFinalPrice());
+            $description .= sprintf("Amount: %s\n", $item->getFinalPrice());
         }
 
         return $description;
