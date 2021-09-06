@@ -30,6 +30,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/sale/lib/internals/bus
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/sale/lib/businessvalue.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/sale/lib/paysystem/service.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/sale/lib/services/paysystem/restrictions/manager.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/sale/lib/internals/status.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/sale/lib/internals/status_lang.php';
 
 IncludeModuleLangFile(__FILE__);
 
@@ -257,7 +259,7 @@ class frisbee_frisbee extends CModule
     private function deleteStatuses()
     {
         foreach (['R', 'RP'] as $status) {
-            StatusTable::delete();
+            StatusTable::delete($status);
             StatusLangTable::delete([
                 'STATUS_ID' => $status
             ]);
