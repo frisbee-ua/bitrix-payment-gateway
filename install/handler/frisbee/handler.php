@@ -63,7 +63,7 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
         $frisbeeService->setSecretKey($busValues['SECRET_KEY']);
         $frisbeeService->setRequestParameterOrderId($orderId);
         $frisbeeService->setRequestParameterOrderDescription($this->generateOrderDescriptionParameter($order));
-        $frisbeeService->setRequestParameterAmount($payment->getSum() * 100);
+        $frisbeeService->setRequestParameterAmount($payment->getSum());
         $frisbeeService->setRequestParameterCurrency($currency);
         $frisbeeService->setRequestParameterServerCallbackUrl($this->getPathResultUrl($payment));
         $frisbeeService->setRequestParameterResponseUrl($this->getReturnUrl($payment));
