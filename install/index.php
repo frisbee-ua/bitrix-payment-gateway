@@ -54,8 +54,8 @@ class frisbee_frisbee extends CModule
     public function __construct()
     {
         require(dirname(__FILE__).'/version.php');
-        $this->MODULE_NAME = GetMessage('F_MODULE_NAME');
-        $this->MODULE_DESCRIPTION = GetMessage('F_MODULE_DESC');
+        $this->MODULE_NAME = GetMessage('FR_MODULE_NAME');
+        $this->MODULE_DESCRIPTION = GetMessage('FR_MODULE_DESC');
         $this->MODULE_VERSION = $arModuleVersion['VERSION'];
         $this->MODULE_VERSION_DATE = $arModuleVersion['VERSION_DATE'];
         $this->PARTNER_NAME = 'Frisbee';
@@ -83,7 +83,7 @@ class frisbee_frisbee extends CModule
 
         $MODULE_ID = $this->MODULE_ID;
         $TAG = 'VWS';
-        $MESSAGE = GetMessage('F_ERR_MODULE_NOT_FOUND', array('#MODULE#'=>'sale'));
+        $MESSAGE = GetMessage('FR_ERR_MODULE_NOT_FOUND', array('#MODULE#'=>'sale'));
         CAdminNotify::Add(compact('MODULE_ID', 'TAG', 'MESSAGE'));
 
         return false;
@@ -91,6 +91,9 @@ class frisbee_frisbee extends CModule
 
     /**
      * @return void
+     * @throws \Bitrix\Main\ArgumentException
+     * @throws \Bitrix\Main\ObjectPropertyException
+     * @throws \Bitrix\Main\SystemException
      */
     public function DoUninstall()
     {
@@ -144,6 +147,7 @@ class frisbee_frisbee extends CModule
 
     /**
      * @return void
+     * @throws \Exception
      */
     private function createPaymentSystem()
     {
@@ -153,7 +157,7 @@ class frisbee_frisbee extends CModule
             'CODE' => 'frisbee',
             'ACTION_FILE' => 'frisbee',
             'SORT' => '200',
-            'DESCRIPTION' => GetMessage('F_PS_DESC'),
+            'DESCRIPTION' => GetMessage('FR_PS_DESC'),
             'NEW_WINDOW' => 'N',
             'HAVE_PAYMENT' => 'Y',
             'HAVE_ACTION' => 'N',
@@ -183,6 +187,9 @@ class frisbee_frisbee extends CModule
 
     /**
      * @return void
+     * @throws \Bitrix\Main\ArgumentException
+     * @throws \Bitrix\Main\ObjectPropertyException
+     * @throws \Bitrix\Main\SystemException
      */
     private function deletePaymentSystem()
     {
@@ -192,6 +199,9 @@ class frisbee_frisbee extends CModule
 
     /**
      * @return void
+     * @throws \Bitrix\Main\ArgumentException
+     * @throws \Bitrix\Main\ObjectPropertyException
+     * @throws \Bitrix\Main\SystemException
      */
     private function createStatuses()
     {
@@ -255,6 +265,7 @@ class frisbee_frisbee extends CModule
 
     /**
      * @return void
+     * @throws \Exception
      */
     private function deleteStatuses()
     {
