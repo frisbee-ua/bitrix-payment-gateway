@@ -152,7 +152,7 @@ class frisbee_frisbee extends CModule
     private function createPaymentSystem()
     {
         $fields = [
-            'NAME' => 'Frisbee',
+            'NAME' => GetMessage('FR_PS_NAME'),
             'PSA_NAME' => 'Frisbee',
             'CODE' => 'frisbee',
             'ACTION_FILE' => 'frisbee',

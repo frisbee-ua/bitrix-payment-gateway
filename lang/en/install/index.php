@@ -23,7 +23,8 @@
  */
 
 
-$MESS['FR_MODULE_NAME'] = 'Frisbee Payment Gateway';
-$MESS['FR_MODULE_DESC'] = 'Handler for the Frisbee service';
-$MESS['FR_PS_DESC'] = 'Buy now pay later';
+$MESS['FR_MODULE_NAME'] = 'Buy now, pay later with Frisbee';
+$MESS['FR_MODULE_DESC'] = 'Frisbee payments plugin';
+$MESS['FR_PS_NAME'] = 'Buy Now, Pay Later';
+$MESS['FR_PS_DESC'] = 'Frisbee payments plugin for Bitrix';
 $MESS['FR_ERR_MODULE_NOT_FOUND'] = 'To install this solution, #MODULE# is required.';

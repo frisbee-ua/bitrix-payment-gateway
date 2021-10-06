@@ -23,7 +23,8 @@
  */
 
 
-$MESS['FR_MODULE_NAME'] = 'Платіжна система Frisbee';
-$MESS['FR_MODULE_DESC'] = 'Оброблювач для платіжної системи Frisbee';
-$MESS['FR_PS_DESC'] = 'Купуй зараз, плати потім';
+$MESS['FR_MODULE_NAME'] = 'Оплата частинами з Frisbee';
+$MESS['FR_MODULE_DESC'] = 'Плагін сервісу оплати частинами Frisbee';
+$MESS['FR_PS_NAME'] = 'Оплата частинами';
+$MESS['FR_PS_DESC'] = 'Плагін сервісу оплати частинами Frisbee для Bitrix';
 $MESS['FR_ERR_MODULE_NOT_FOUND'] = 'Для установки даного рішення необхідна наявність модуля #MODULE#.';
