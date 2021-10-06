@@ -59,8 +59,8 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
         }
 
         $frisbeeService = new \FrisbeeService();
-        $frisbeeService->setMerchantId($busValues['MERCHANT_ID']);
-        $frisbeeService->setSecretKey($busValues['SECRET_KEY']);
+        $frisbeeService->setMerchantId($busValues['FRISBEE_MERCHANT_ID']);
+        $frisbeeService->setSecretKey($busValues['FRISBEE_SECRET_KEY']);
         $frisbeeService->setRequestParameterOrderId($orderId);
         $frisbeeService->setRequestParameterOrderDescription($this->generateOrderDescriptionParameter($order));
         $frisbeeService->setRequestParameterAmount($payment->getSum());
@@ -95,7 +95,7 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
      */
     public static function getIndicativeFields()
     {
-        return ['SECRET_KEY', 'MERCHANT_ID'];
+        return ['FRISBEE_SECRET_KEY', 'FRISBEE_MERCHANT_ID'];
     }
 
     /**

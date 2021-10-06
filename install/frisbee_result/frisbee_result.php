@@ -69,11 +69,11 @@ class FrisbeeResult
      */
     public function process()
     {
-        if (empty($this->parameters['MERCHANT_ID'])) {
+        if (empty($this->parameters['FRISBEE_MERCHANT_ID'])) {
             throw new \Exception('Frisbee merchant id not set.');
         }
 
-        if (!isset($this->parameters['SECRET_KEY'])) {
+        if (!isset($this->parameters['FRISBEE_SECRET_KEY'])) {
             throw new \Exception('Frisbee secret key not set.');
         }
 
@@ -83,8 +83,8 @@ class FrisbeeResult
             $frisbeeService = new FrisbeeService();
             $data = $frisbeeService->getCallbackData();
             $orderId = $frisbeeService->parseFrisbeeOrderId($data);
-            $frisbeeService->setMerchantId($this->parameters['MERCHANT_ID']);
-            $frisbeeService->setSecretKey($this->parameters['SECRET_KEY']);
+            $frisbeeService->setMerchantId($this->parameters['FRISBEE_MERCHANT_ID']);
+            $frisbeeService->setSecretKey($this->parameters['FRISBEE_SECRET_KEY']);
 
             $frisbeeService->handleCallbackData($data);
 
@@ -120,6 +120,7 @@ class FrisbeeResult
             http_response_code(500);
         }
 
+        $datetimeFormat = $GLOBALS["DB"]->DateFormatToPHP(CSite::GetDateFormat("FULL"));
         $description = sprintf('Frisbee ID: %s Payment ID: %s Message: %s', $data['order_id'], $data['payment_id'], $message);
         $arFields = array(
             'STATUS_ID' => $orderStatus,
@@ -130,12 +131,12 @@ class FrisbeeResult
             'PS_STATUS_MESSAGE' => $data['order_status'],
             'PS_SUM' => $data['amount'],
             'PS_CURRENCY' => $data['currency'],
-            'PS_RESPONSE_DATE' => date('m/d/Y h:i:s a'),
+            'PS_RESPONSE_DATE' => date($datetimeFormat),
         );
 
         if ($orderStatus === 'D') {
             $arFields['CANCELED'] = 'Y';
-            $arFields['DATE_CANCELED'] = date('m/d/Y h:i:s a');
+            $arFields['DATE_CANCELED'] = date($datetimeFormat);
             $arFields['REASON_CANCELED'] = $message;
         }
 
@@ -166,6 +167,17 @@ class FrisbeeResult
         foreach ($result->fetchAll() as $parameter) {
             $name = $parameter['CODE_KEY'];
             $parameters[$name] = $parameter['PROVIDER_VALUE'];
+        }
+
+        if (count($parameters) === 0) {
+            $result = BusinessValueTable::getList(array(
+                'select' => array('CODE_KEY', 'CONSUMER_KEY', 'PERSON_TYPE_ID', 'PROVIDER_KEY', 'PROVIDER_VALUE'),
+            ));
+
+            foreach ($result->fetchAll() as $parameter) {
+                $name = $parameter['CODE_KEY'];
+                $parameters[$name] = $parameter['PROVIDER_VALUE'];
+            }
         }
 
         return $parameters;

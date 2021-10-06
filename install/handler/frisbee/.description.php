@@ -18,14 +18,14 @@ $data = [
     'NAME' => 'Frisbee',
 	'SORT' => 500,
 	'CODES' => [
-        'MERCHANT_ID' => array(
+        'FRISBEE_MERCHANT_ID' => array(
             'NAME' => Loc::getMessage('FRISBEE_MERCHANT'),
             'DESCR' => Loc::getMessage('FRISBEE_MERCHANT_DESC'),
             'VALUE' => '',
             'TYPE' => '',
             'SORT' => 100,
         ),
-        'SECRET_KEY' => array(
+        'FRISBEE_SECRET_KEY' => array(
             'NAME' => Loc::getMessage('FRISBEE_KEY'),
             'DESCR' => Loc::getMessage('FRISBEE_KEY_DESC'),
             'VALUE' => '',
