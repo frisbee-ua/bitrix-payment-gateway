@@ -165,11 +165,11 @@ class frisbee_frisbee extends CModule
             'HAVE_PREPAY' => 'N',
             'HAVE_PRICE' => 'N',
             'HAVE_RESULT_RECEIVE' => 'Y',
-            'ENCODING' => '',
+            'ENCODING' => 'utf-8',
             'ALLOW_EDIT_PAYMENT' => 'Y',
             'IS_CASH' => 'N',
             'AUTO_CHANGE_1C' => 'N',
-            'CAN_PRINT_CHECK' => 'N',
+            'CAN_PRINT_CHECK' => 'Y',
             'ENTITY_REGISTRY_TYPE' => 'ORDER',
             'XML_ID' => SalePaySystemManager::generateXmlId(),
         ];
