@@ -24,7 +24,7 @@
 
 
 $MESS['FR_MODULE_NAME'] = 'Buy now, pay later with Frisbee';
-$MESS['FR_MODULE_DESC'] = 'Frisbee payments plugin';
+$MESS['FR_MODULE_DESC'] = 'Frisbee payments plugin for Bitrix';
 $MESS['FR_PS_NAME'] = 'Buy Now, Pay Later';
-$MESS['FR_PS_DESC'] = 'Frisbee payments plugin for Bitrix';
+$MESS['FR_PS_DESC'] = 'Frisbee payments plugin';
 $MESS['FR_ERR_MODULE_NOT_FOUND'] = 'To install this solution, #MODULE# is required.';
