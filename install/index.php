@@ -293,7 +293,7 @@ class frisbee_frisbee extends CModule
      */
     private function deleteStatuses()
     {
-        foreach (['R', 'RP'] as $status) {
+        foreach (['R', 'RP', 'C'] as $status) {
             StatusTable::delete($status);
             StatusLangTable::delete([
                 'STATUS_ID' => $status
