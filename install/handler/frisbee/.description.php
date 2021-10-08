@@ -31,6 +31,27 @@ $data = [
             'VALUE' => '',
             'TYPE' => '',
             'SORT' => 200,
-        )
+        ),
+        'FRISBEE_STATUS_PROCESSING' => array(
+            'NAME' => Loc::getMessage('FRISBEE_STATUS_PROCESSING'),
+            'DESCR' => Loc::getMessage('FRISBEE_STATUS_PROCESSING_DESC'),
+            'VALUE' => '',
+            'TYPE' => '',
+            'SORT' => 200,
+        ),
+        'FRISBEE_STATUS_APPROVED' => array(
+            'NAME' => Loc::getMessage('FRISBEE_STATUS_APPROVED'),
+            'DESCR' => Loc::getMessage('FRISBEE_STATUS_APPROVED_DESC'),
+            'VALUE' => '',
+            'TYPE' => '',
+            'SORT' => 200,
+        ),
+        'FRISBEE_STATUS_CANCELED' => array(
+            'NAME' => Loc::getMessage('FRISBEE_STATUS_CANCELED'),
+            'DESCR' => Loc::getMessage('FRISBEE_STATUS_CANCELED_DESC'),
+            'VALUE' => '',
+            'TYPE' => '',
+            'SORT' => 200,
+        ),
 	]
 ];

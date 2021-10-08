@@ -77,10 +77,10 @@ class FrisbeeResult
             throw new \Exception('Frisbee secret key not set.');
         }
 
-        $orderStatusPending = 'N';
+        $frisbeeService = new FrisbeeService();
+        $orderStatusProcessing = $this->getOrderStatusProcessing();
 
         try {
-            $frisbeeService = new FrisbeeService();
             $data = $frisbeeService->getCallbackData();
             $orderId = $frisbeeService->parseFrisbeeOrderId($data);
             $frisbeeService->setMerchantId($this->parameters['FRISBEE_MERCHANT_ID']);
@@ -95,9 +95,9 @@ class FrisbeeResult
             $currentOrderStatus = $order->getField('STATUS_ID');
 
             if ($frisbeeService->isOrderDeclined()) {
-                $orderStatus = 'C';
+                $orderStatus = $this->getOrderStatusCanceled();
             } elseif ($frisbeeService->isOrderApproved()) {
-                $orderStatus = 'P';
+                $orderStatus = $this->getOrderStatusApproved();
                 $order->getPaymentCollection()->offsetGet(0)->setPaid('Y');
             } elseif ($frisbeeService->isOrderFullyReversed()) {
                 $orderStatus = 'R';
@@ -109,7 +109,7 @@ class FrisbeeResult
 
             $message = $frisbeeService->getStatusMessage();
         } catch (\Exception $exception) {
-            $orderStatus = $orderStatusPending;
+            $orderStatus = $orderStatusProcessing;
             echo $message = $exception->getMessage();
             http_response_code(500);
         }
@@ -128,13 +128,49 @@ class FrisbeeResult
             'PS_RESPONSE_DATE' => date($datetimeFormat),
         );
 
-        if ($orderStatus === 'C') {
+        if ($frisbeeService->isOrderDeclined()) {
             $arFields['CANCELED'] = 'Y';
             $arFields['DATE_CANCELED'] = date($datetimeFormat);
             $arFields['REASON_CANCELED'] = $message;
         }
 
         CSaleOrder::Update($orderId, $arFields);
+    }
+
+    /**
+     * @return mixed|string
+     */
+    protected function getOrderStatusProcessing()
+    {
+        if (!empty($this->parameters['FRISBEE_STATUS_PROCESSING'])) {
+            return $this->parameters['FRISBEE_STATUS_PROCESSING'];
+        }
+
+        return 'N';
+    }
+
+    /**
+     * @return mixed|string
+     */
+    protected function getOrderStatusApproved()
+    {
+        if (!empty($this->parameters['FRISBEE_STATUS_APPROVED'])) {
+            return $this->parameters['FRISBEE_STATUS_APPROVED'];
+        }
+
+        return 'P';
+    }
+
+    /**
+     * @return mixed|string
+     */
+    protected function getOrderStatusCanceled()
+    {
+        if (!empty($this->parameters['FRISBEE_STATUS_CANCELED'])) {
+            return $this->parameters['FRISBEE_STATUS_CANCELED'];
+        }
+
+        return 'C';
     }
 
     /**
