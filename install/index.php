@@ -225,6 +225,15 @@ class frisbee_frisbee extends CModule
             ];
         }
 
+        if (!StatusTable::getRowById('C')) {
+            $statuses[] = [
+                'ID' => 'C',
+                'TYPE' => 'O',
+                'SORT' => 800,
+                'NOTIFY' => 'N'
+            ];
+        }
+
         if ($statuses) {
             StatusTable::addMulti($statuses);
         }
@@ -259,6 +268,21 @@ class frisbee_frisbee extends CModule
                 'STATUS_ID' => 'RP',
                 'LID' => 'ua',
                 'NAME' => 'Частково повернено',
+            ],
+            [
+                'STATUS_ID' => 'C',
+                'LID' => 'en',
+                'NAME' => 'Canceled',
+            ],
+            [
+                'STATUS_ID' => 'C',
+                'LID' => 'ru',
+                'NAME' => 'Отменен',
+            ],
+            [
+                'STATUS_ID' => 'C',
+                'LID' => 'ua',
+                'NAME' => 'Скасоване',
             ],
         ]);
     }

@@ -95,13 +95,7 @@ class FrisbeeResult
             $currentOrderStatus = $order->getField('STATUS_ID');
 
             if ($frisbeeService->isOrderDeclined()) {
-                $orderStatus = 'D';
-            } elseif ($frisbeeService->isOrderExpired()) {
-                if ($currentOrderStatus === $orderStatusPending) {
-                    $orderStatus = 'D';
-                } else {
-                    die;
-                }
+                $orderStatus = 'C';
             } elseif ($frisbeeService->isOrderApproved()) {
                 $orderStatus = 'P';
                 $order->getPaymentCollection()->offsetGet(0)->setPaid('Y');
@@ -120,7 +114,7 @@ class FrisbeeResult
             http_response_code(500);
         }
 
-        $datetimeFormat = $GLOBALS["DB"]->DateFormatToPHP(CSite::GetDateFormat("FULL"));
+        $datetimeFormat = $GLOBALS['DB']->DateFormatToPHP(CSite::GetDateFormat('FULL'));
         $description = sprintf('Frisbee ID: %s Payment ID: %s Message: %s', $data['order_id'], $data['payment_id'], $message);
         $arFields = array(
             'STATUS_ID' => $orderStatus,
