@@ -128,7 +128,7 @@ class FrisbeeResult
             'PS_RESPONSE_DATE' => date($datetimeFormat),
         );
 
-        if ($orderStatus === 'D') {
+        if ($orderStatus === 'C') {
             $arFields['CANCELED'] = 'Y';
             $arFields['DATE_CANCELED'] = date($datetimeFormat);
             $arFields['REASON_CANCELED'] = $message;
