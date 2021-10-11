@@ -67,12 +67,14 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
         $frisbeeService->setRequestParameterCurrency($currency);
         $frisbeeService->setRequestParameterServerCallbackUrl($this->getPathResultUrl($payment));
         $frisbeeService->setRequestParameterResponseUrl($this->getReturnUrl($payment));
-        $frisbeeService->setRequestParameterLanguage(\Bitrix\Main\Application::getInstance()->getContext()->getLanguage());
+        $frisbeeService->setRequestParameterLanguage(Application::getInstance()->getContext()->getLanguage());
         $frisbeeService->setRequestParameterSenderEmail($order->getPropertyCollection()->getUserEmail()->getValue());
         $frisbeeService->setRequestParameterReservationData($this->generateReservationDataParameter($order));
 
         try {
             $checkoutUrl = $frisbeeService->retrieveCheckoutUrl($orderId);
+            $orderStatusProcessing = $this->getOrderStatusProcessingId();
+            $this->setOrderStatusProcessing($order, $orderStatusProcessing);
 
             if ($checkoutUrl) {
                 return LocalRedirect($checkoutUrl);
@@ -123,6 +125,32 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
     public function getCurrencyList()
     {
         return ['RUB', 'USD', 'EUR', 'UAH'];
+    }
+
+    /**
+     * @return mixed|string
+     */
+    private function getOrderStatusProcessingId()
+    {
+        $orderStatusProcessing = 'N';
+
+        if (!empty($busValues['FRISBEE_STATUS_PROCESSING'])) {
+            return $busValues['FRISBEE_STATUS_PROCESSING'];
+        }
+
+        return $orderStatusProcessing;
+    }
+
+    /**
+     * @param \Bitrix\Crm\Order\Order $order
+     * @param $status
+     * @return void
+     */
+    private function setOrderStatusProcessing(Order $order, $status)
+    {
+        CSaleOrder::Update($order->getId(), [
+            'STATUS_ID' => $status
+        ]);
     }
 
     /**

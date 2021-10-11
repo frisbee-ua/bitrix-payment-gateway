@@ -44,6 +44,7 @@ $data = [
             'INPUT' => [
                 'TYPE' => 'ENUM',
                 'OPTIONS' => $orderStatuses,
+                'VALUE' => 'N',
             ],
         ),
         'FRISBEE_STATUS_APPROVED' => array(
@@ -55,6 +56,7 @@ $data = [
             'INPUT' => [
                 'TYPE' => 'ENUM',
                 'OPTIONS' => $orderStatuses,
+                'VALUE' => 'P',
             ],
         ),
         'FRISBEE_STATUS_CANCELED' => array(
@@ -66,6 +68,7 @@ $data = [
             'INPUT' => [
                 'TYPE' => 'ENUM',
                 'OPTIONS' => $orderStatuses,
+                'VALUE' => 'C',
             ],
         ),
     ]
