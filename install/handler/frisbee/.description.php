@@ -53,10 +53,12 @@ $data = [
             'TYPE' => 'SELECT',
             'SORT' => 400,
             'GROUP' => 'PAYMENT',
+            'DEFAULT' => 'P',
             'INPUT' => [
                 'TYPE' => 'ENUM',
                 'OPTIONS' => $orderStatuses,
                 'VALUE' => 'P',
+                'DEFAULT' => 'P',
             ],
         ),
         'FRISBEE_STATUS_CANCELED' => array(
@@ -65,10 +67,12 @@ $data = [
             'TYPE' => 'SELECT',
             'SORT' => 500,
             'GROUP' => 'PAYMENT',
+            'DEFAULT' => 'C',
             'INPUT' => [
                 'TYPE' => 'ENUM',
                 'OPTIONS' => $orderStatuses,
                 'VALUE' => 'C',
+                'DEFAULT' => 'C',
             ],
         ),
     ]

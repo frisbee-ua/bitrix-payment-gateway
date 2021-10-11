@@ -73,7 +73,7 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
 
         try {
             $checkoutUrl = $frisbeeService->retrieveCheckoutUrl($orderId);
-            $orderStatusProcessing = $this->getOrderStatusProcessingId();
+            $orderStatusProcessing = $this->getOrderStatusProcessingId($busValues);
             $this->setOrderStatusProcessing($order, $orderStatusProcessing);
 
             if ($checkoutUrl) {
@@ -130,7 +130,7 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
     /**
      * @return mixed|string
      */
-    private function getOrderStatusProcessingId()
+    private function getOrderStatusProcessingId($busValues)
     {
         $orderStatusProcessing = 'N';
 
@@ -142,13 +142,13 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
     }
 
     /**
-     * @param \Bitrix\Crm\Order\Order $order
+     * @param \Bitrix\Sale\Order $order
      * @param $status
      * @return void
      */
-    private function setOrderStatusProcessing(Order $order, $status)
+    private function setOrderStatusProcessing(\Bitrix\Sale\Order $order, $status)
     {
-        CSaleOrder::Update($order->getId(), [
+        \CSaleOrder::Update($order->getId(), [
             'STATUS_ID' => $status
         ]);
     }
