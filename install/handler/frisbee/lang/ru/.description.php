@@ -6,4 +6,10 @@ $MESS['FRISBEE_KEY_DESC'] = 'Cекретный ключ вашего мерча�
 $MESS['FRISBEE_RESPONSE_URL'] = 'URL ответа';
 $MESS['FRISBEE_RESPONSE_URL_DESC'] = 'URL ответа после оплаты';
 $MESS['FRISBEE_CURRENCY'] = 'Валюта';
+$MESS['FRISBEE_STATUS_PROCESSING'] = 'Статус заказа в процессе';
+$MESS['FRISBEE_STATUS_PROCESSING_DESC'] = 'Статус заказа в процессе';
+$MESS['FRISBEE_STATUS_APPROVED'] = 'Статус заказа после оплаты';
+$MESS['FRISBEE_STATUS_APPROVED_DESC'] = 'Статус заказа после оплаты';
+$MESS['FRISBEE_STATUS_CANCELED'] = 'Статус отмененного заказа';
+$MESS['FRISBEE_STATUS_CANCELED_DESC'] = 'Статус отмененного заказа';
 ?>
