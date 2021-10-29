@@ -116,10 +116,11 @@ class FrisbeeResult
 
         $datetimeFormat = $GLOBALS['DB']->DateFormatToPHP(CSite::GetDateFormat('FULL'));
         $description = sprintf('Frisbee ID: %s Payment ID: %s Message: %s', $data['order_id'], $data['payment_id'], $message);
+        $orderStatusApproved = $this->getOrderStatusApproved();
         $arFields = array(
             'STATUS_ID' => $orderStatus,
-            'PAYED' => $orderStatus === 'P' ? 'Y' : 'N',
-            'PS_STATUS' => $orderStatus === 'P' ? 'Y' : 'N',
+            'PAYED' => $orderStatus === $orderStatusApproved ? 'Y' : 'N',
+            'PS_STATUS' => $orderStatus === $orderStatusApproved ? 'Y' : 'N',
             'PS_STATUS_CODE' => $data['order_status'],
             'PS_STATUS_DESCRIPTION' => $description,
             'PS_STATUS_MESSAGE' => $data['order_status'],
