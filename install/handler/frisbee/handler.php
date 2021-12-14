@@ -159,7 +159,7 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
      */
     private function getPathResultUrl(Payment $payment)
     {
-        $url = sprintf('%s://%s/%s', stripos($_SERVER['SERVER_PROTOCOL'], 'https') === 0 ? 'https' : 'http', $_SERVER['HTTP_HOST'], 'bitrix/tools/frisbee_result/frisbee_result.php');
+        $url = sprintf('%s://%s/%s', \CMain::IsHTTPS() ? 'https' : 'http', $_SERVER['HTTP_HOST'], 'bitrix/tools/frisbee_result/frisbee_result.php');
 
         return str_replace('&', '&amp;', $url);
     }
