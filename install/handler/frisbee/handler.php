@@ -77,7 +77,7 @@ class FrisbeeHandler extends PaySystem\ServiceHandler
             $this->setOrderStatusProcessing($order, $orderStatusProcessing);
 
             if ($checkoutUrl) {
-                return LocalRedirect($checkoutUrl);
+                return LocalRedirect($checkoutUrl, true);
             }
 
             $message = $frisbeeService->getRequestResultErrorMessage();
